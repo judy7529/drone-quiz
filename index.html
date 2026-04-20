@@ -167,7 +167,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
       <div class="stat-sub">題（第一章）</div>
     </div>
   </div>
-  <div class="home-btn" onclick="goTo('screen-setup')">
+  <div class="home-btn" onclick="goTo('screen-setup')" ontouchstart="">
     <div class="home-btn-icon">✏️</div>
     <div class="home-btn-text">
       <div class="home-btn-title">開始練習</div>
@@ -175,7 +175,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
     </div>
     <div class="home-btn-arrow">›</div>
   </div>
-  <div class="home-btn" onclick="goTo('screen-overview')">
+  <div class="home-btn" onclick="goTo('screen-overview')" ontouchstart="">
     <div class="home-btn-icon">📖</div>
     <div class="home-btn-text">
       <div class="home-btn-title">全覽題目</div>
@@ -183,7 +183,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
     </div>
     <div class="home-btn-arrow">›</div>
   </div>
-  <div class="home-btn" onclick="goTo('screen-errors')">
+  <div class="home-btn" onclick="goTo('screen-errors')" ontouchstart="">
     <div class="home-btn-icon">🔴</div>
     <div class="home-btn-text">
       <div class="home-btn-title">錯題回顧</div>
@@ -713,8 +713,8 @@ const QUESTIONS = {
     ans:'C',
     exp:'【建築物及障礙物 = 30公尺】A說高速公路10公尺→錯！B說高架鐵路20公尺→錯！只有C正確。注意D說「以上均正確」但A和B都是錯的，所以不選D。記憶：「30公尺才對，10和20都是陷阱」。',
     related:[]
-  }
-    'ch2_2': {
+  },
+  'ch2_2': {
     ch:2, num:2, pool:'heavy',
     text:'下列何者不是造成飛行事故的原因之一？',
     opts:{A:'機械故障',B:'天氣因素',C:'人為疏失',D:'飛行前完整檢查'},
