@@ -1,0 +1,1012 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>無人機學科題庫複習</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0d0d1a;--card:#161628;--card2:#1e1e35;
+  --accent:#6c63ff;--accent2:#8b83ff;
+  --green:#2ecc71;--red:#e74c3c;--yellow:#f39c12;
+  --text:#e8e8f4;--sub:#9090b0;--border:#2a2a45;
+}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding:0;overflow-x:hidden}
+.screen{display:none;min-height:100vh;padding:20px 16px 40px}
+.screen.active{display:block}
+
+/* HOME */
+.home-header{text-align:center;padding:40px 0 32px}
+.home-title{font-size:26px;font-weight:800;color:#fff;letter-spacing:1px}
+.home-sub{color:var(--sub);margin-top:6px;font-size:14px}
+.exam-countdown{background:linear-gradient(135deg,#2d1b69,#1a1a3e);border:1px solid var(--accent);border-radius:16px;padding:16px 20px;margin:0 0 28px;text-align:center}
+.countdown-label{font-size:12px;color:var(--sub);margin-bottom:4px}
+.countdown-val{font-size:32px;font-weight:800;color:var(--accent2)}
+.countdown-unit{font-size:13px;color:var(--sub);margin-left:4px}
+.pool-stats{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:28px}
+.stat-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px;text-align:center}
+.stat-label{font-size:11px;color:var(--sub);margin-bottom:4px}
+.stat-num{font-size:22px;font-weight:700;color:var(--accent2)}
+.stat-sub{font-size:11px;color:var(--sub);margin-top:2px}
+.home-btn{display:flex;align-items:center;gap:14px;background:var(--card);border:1px solid var(--border);border-radius:16px;padding:18px 20px;margin-bottom:12px;cursor:pointer;transition:all .2s;width:100%;text-align:left}
+.home-btn:active{transform:scale(.98);border-color:var(--accent)}
+.home-btn-icon{font-size:26px;width:44px;text-align:center}
+.home-btn-text{flex:1}
+.home-btn-title{font-size:16px;font-weight:700;color:#fff}
+.home-btn-desc{font-size:12px;color:var(--sub);margin-top:2px}
+.home-btn-arrow{color:var(--sub);font-size:18px}
+
+/* SETUP */
+.setup-header{display:flex;align-items:center;gap:12px;margin-bottom:28px}
+.back-btn{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:8px 14px;cursor:pointer;color:var(--text);font-size:14px}
+.setup-title{font-size:20px;font-weight:700}
+.section-label{font-size:12px;color:var(--sub);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px}
+.section{margin-bottom:24px}
+.option-group{display:flex;flex-direction:column;gap:8px}
+.option-btn{background:var(--card);border:2px solid var(--border);border-radius:14px;padding:14px 18px;cursor:pointer;text-align:left;transition:all .2s;color:var(--text)}
+.option-btn.selected{border-color:var(--accent);background:#1a1530}
+.option-btn-title{font-size:15px;font-weight:600}
+.option-btn-desc{font-size:12px;color:var(--sub);margin-top:3px}
+.count-selector{display:flex;align-items:center;gap:12px;background:var(--card);border:1px solid var(--border);border-radius:14px;padding:16px 18px}
+.count-btn{background:var(--accent);border:none;border-radius:8px;width:36px;height:36px;font-size:20px;color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.count-val{flex:1;text-align:center;font-size:28px;font-weight:700;color:var(--accent2)}
+.count-label{font-size:12px;color:var(--sub);text-align:center}
+.start-btn{width:100%;padding:18px;background:linear-gradient(135deg,var(--accent),#a855f7);border:none;border-radius:16px;color:#fff;font-size:18px;font-weight:700;cursor:pointer;margin-top:8px;letter-spacing:.5px}
+.start-btn:active{transform:scale(.98)}
+
+/* QUIZ */
+.quiz-header{margin-bottom:20px}
+.quiz-meta{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.quiz-progress-label{font-size:13px;color:var(--sub)}
+.quiz-score-label{font-size:13px;color:var(--sub)}
+.progress-bar{height:6px;background:var(--card2);border-radius:3px;overflow:hidden}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--accent),#a855f7);border-radius:3px;transition:width .3s}
+.quiz-pool-tag{display:inline-block;background:var(--card2);border:1px solid var(--border);border-radius:20px;padding:4px 12px;font-size:11px;color:var(--sub);margin-bottom:14px}
+.question-card{background:var(--card);border:1px solid var(--border);border-radius:18px;padding:20px;margin-bottom:18px}
+.question-num{font-size:12px;color:var(--accent2);margin-bottom:8px;font-weight:600}
+.question-text{font-size:16px;line-height:1.6;color:#fff;font-weight:500}
+.options-list{display:flex;flex-direction:column;gap:10px;margin-bottom:18px}
+.option-item{background:var(--card);border:2px solid var(--border);border-radius:14px;padding:14px 16px;cursor:pointer;display:flex;gap:12px;align-items:flex-start;transition:all .15s}
+.option-item:active{transform:scale(.99)}
+.option-item.selected-wrong{border-color:var(--red);background:#2a0f0f}
+.option-item.correct{border-color:var(--green);background:#0a2a1a}
+.option-item.disabled{cursor:default;opacity:.7}
+.option-letter{font-size:15px;font-weight:700;min-width:22px;margin-top:1px}
+.option-text{font-size:15px;line-height:1.5;flex:1}
+.option-item.correct .option-letter{color:var(--green)}
+.option-item.selected-wrong .option-letter{color:var(--red)}
+
+/* EXPLANATION */
+.explanation-box{background:var(--card2);border-radius:16px;padding:18px;margin-bottom:18px;border-left:4px solid var(--accent)}
+.explanation-result{font-size:20px;font-weight:800;margin-bottom:12px}
+.explanation-result.correct{color:var(--green)}
+.explanation-result.wrong{color:var(--red)}
+.explanation-answer{font-size:13px;color:var(--accent2);margin-bottom:10px;font-weight:600}
+.explanation-text{font-size:14px;line-height:1.7;color:#d0d0e8}
+.next-btn{width:100%;padding:16px;background:var(--accent);border:none;border-radius:14px;color:#fff;font-size:16px;font-weight:700;cursor:pointer}
+.next-btn:active{transform:scale(.98)}
+.end-early-btn{width:100%;padding:10px;background:transparent;border:1px solid var(--border);border-radius:12px;color:var(--sub);font-size:13px;cursor:pointer;margin-top:8px}
+.end-early-btn:active{border-color:var(--red);color:var(--red)}
+
+/* RESULT */
+.result-header{text-align:center;padding:32px 0 24px}
+.result-score-ring{width:140px;height:140px;border-radius:50%;border:6px solid var(--accent);display:flex;flex-direction:column;align-items:center;justify-content:center;margin:0 auto 20px;background:var(--card)}
+.result-score-num{font-size:42px;font-weight:800;color:var(--accent2)}
+.result-score-denom{font-size:14px;color:var(--sub)}
+.result-title{font-size:22px;font-weight:700;margin-bottom:6px}
+.result-sub{font-size:14px;color:var(--sub)}
+.result-stats{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:24px 0}
+.result-stat{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:16px;text-align:center}
+.result-stat-num{font-size:28px;font-weight:700}
+.result-stat-label{font-size:12px;color:var(--sub);margin-top:4px}
+.result-actions{display:flex;flex-direction:column;gap:10px;margin-bottom:24px}
+.result-btn{padding:15px;border-radius:14px;border:none;font-size:15px;font-weight:600;cursor:pointer}
+.result-btn-primary{background:var(--accent);color:#fff}
+.result-btn-secondary{background:var(--card);border:1px solid var(--border);color:var(--text)}
+.wrong-list-title{font-size:15px;font-weight:700;margin-bottom:12px;color:var(--sub)}
+.wrong-item{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px;margin-bottom:10px}
+.wrong-item-num{font-size:12px;color:var(--red);margin-bottom:6px;font-weight:600}
+.wrong-item-text{font-size:13px;color:#d0d0e8;line-height:1.5}
+.wrong-item-answer{font-size:12px;color:var(--green);margin-top:6px;font-weight:600}
+
+/* OVERVIEW */
+.overview-filter{display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap}
+.filter-btn{background:var(--card);border:2px solid var(--border);border-radius:20px;padding:8px 16px;font-size:13px;cursor:pointer;color:var(--text);font-weight:600}
+.filter-btn.active{border-color:var(--accent);color:var(--accent2)}
+.overview-item{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:18px;margin-bottom:12px}
+.overview-item-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px}
+.overview-item-num{font-size:12px;color:var(--accent2);font-weight:600}
+.overview-pool-badge{font-size:10px;padding:2px 8px;border-radius:20px;font-weight:600}
+.badge-light{background:#1a2a40;color:#60a5fa}
+.badge-heavy{background:#2a1a1a;color:#f87171}
+.overview-item-q{font-size:14px;line-height:1.6;color:#d0d0e8;margin-bottom:10px}
+.overview-answer{font-size:13px;color:var(--green);font-weight:700;margin-bottom:8px}
+.overview-exp{font-size:13px;line-height:1.6;color:var(--sub);border-top:1px solid var(--border);padding-top:8px}
+
+/* ERROR REVIEW */
+.error-item{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:18px;margin-bottom:12px}
+.error-item-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.error-count-badge{background:#2a0f0f;border:1px solid var(--red);border-radius:20px;padding:4px 12px;font-size:13px;color:var(--red);font-weight:700}
+.error-item-q{font-size:14px;line-height:1.6;color:#d0d0e8;margin-bottom:8px}
+.error-item-answer{font-size:13px;color:var(--green);font-weight:700;margin-bottom:8px}
+.error-item-exp{font-size:13px;line-height:1.6;color:var(--sub);border-top:1px solid var(--border);padding-top:8px}
+.no-errors{text-align:center;padding:60px 20px;color:var(--sub)}
+.no-errors-icon{font-size:48px;margin-bottom:16px}
+
+/* Table in explanation */
+.exp-table{width:100%;border-collapse:collapse;margin:10px 0;font-size:12px}
+.exp-table th{background:var(--card);padding:6px 8px;text-align:left;color:var(--accent2);border:1px solid var(--border)}
+.exp-table td{padding:6px 8px;border:1px solid var(--border);line-height:1.4}
+.exp-table tr:nth-child(even) td{background:#12122a}
+
+@media(min-width:600px){.screen{max-width:600px;margin:0 auto}}
+</style>
+</head>
+<body>
+
+<!-- HOME -->
+<div class="screen active" id="screen-home">
+  <div class="home-header">
+    <div class="home-title">🚁 無人機學科複習</div>
+    <div class="home-sub">遙控無人機專業操作證</div>
+  </div>
+  <div class="exam-countdown">
+    <div class="countdown-label">距離考試</div>
+    <div><span class="countdown-val" id="countdown-val">—</span><span class="countdown-unit">小時</span></div>
+  </div>
+  <div class="pool-stats">
+    <div class="stat-card">
+      <div class="stat-label">一點點不熟</div>
+      <div class="stat-num" id="stat-light">10</div>
+      <div class="stat-sub">題（第一章）</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">很不熟</div>
+      <div class="stat-num" id="stat-heavy">40</div>
+      <div class="stat-sub">題（第一章）</div>
+    </div>
+  </div>
+  <div class="home-btn" onclick="goTo('screen-setup')">
+    <div class="home-btn-icon">✏️</div>
+    <div class="home-btn-text">
+      <div class="home-btn-title">開始練習</div>
+      <div class="home-btn-desc">選池子、題數，隨機抽題</div>
+    </div>
+    <div class="home-btn-arrow">›</div>
+  </div>
+  <div class="home-btn" onclick="goTo('screen-overview')">
+    <div class="home-btn-icon">📖</div>
+    <div class="home-btn-text">
+      <div class="home-btn-title">全覽題目</div>
+      <div class="home-btn-desc">一次瀏覽所有題目、答案、解析</div>
+    </div>
+    <div class="home-btn-arrow">›</div>
+  </div>
+  <div class="home-btn" onclick="goTo('screen-errors')">
+    <div class="home-btn-icon">🔴</div>
+    <div class="home-btn-text">
+      <div class="home-btn-title">錯題回顧</div>
+      <div class="home-btn-desc">依錯誤次數排序，附解析</div>
+    </div>
+    <div class="home-btn-arrow">›</div>
+  </div>
+</div>
+
+<!-- SETUP -->
+<div class="screen" id="screen-setup">
+  <div class="setup-header">
+    <button class="back-btn" onclick="goTo('screen-home')">← 返回</button>
+    <div class="setup-title">練習設定</div>
+  </div>
+  <div class="section">
+    <div class="section-label">選擇章節</div>
+    <div class="option-group">
+      <button class="option-btn selected" id="chap-1" onclick="selectChap(1)">
+        <div class="option-btn-title">第一章　民用航空法及相關法規</div>
+        <div class="option-btn-desc">共 50 題在你的複習池</div>
+      </button>
+    </div>
+  </div>
+  <div class="section">
+    <div class="section-label">選擇題目池</div>
+    <div class="option-group">
+      <button class="option-btn" id="pool-light" onclick="selectPool('light')">
+        <div class="option-btn-title">🔵 一點點不熟</div>
+        <div class="option-btn-desc">10 題</div>
+      </button>
+      <button class="option-btn" id="pool-heavy" onclick="selectPool('heavy')">
+        <div class="option-btn-title">🔴 很不熟</div>
+        <div class="option-btn-desc">40 題</div>
+      </button>
+      <button class="option-btn selected" id="pool-mixed" onclick="selectPool('mixed')">
+        <div class="option-btn-title">🟣 混合（很不熟優先）</div>
+        <div class="option-btn-desc">70% 很不熟 + 30% 一點點不熟</div>
+      </button>
+    </div>
+  </div>
+  <div class="section">
+    <div class="section-label">題數</div>
+    <div class="count-selector">
+      <button class="count-btn" onclick="changeCount(-5)">−</button>
+      <div>
+        <div class="count-val" id="count-display">10</div>
+        <div class="count-label">題</div>
+      </div>
+      <button class="count-btn" onclick="changeCount(5)">+</button>
+    </div>
+  </div>
+  <button class="start-btn" onclick="startQuiz()">開始練習 →</button>
+</div>
+
+<!-- QUIZ -->
+<div class="screen" id="screen-quiz">
+  <div class="quiz-header">
+    <div class="quiz-meta">
+      <span class="quiz-progress-label" id="quiz-progress-label">第 1 / 10 題</span>
+      <span class="quiz-score-label" id="quiz-score-label">✅ 0　❌ 0</span>
+    </div>
+    <div class="progress-bar"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
+  </div>
+  <div class="quiz-pool-tag" id="quiz-pool-tag">混合</div>
+  <div class="question-card">
+    <div class="question-num" id="q-num">第 1 章　第 18 題</div>
+    <div class="question-text" id="q-text"></div>
+  </div>
+  <div class="options-list" id="options-list"></div>
+  <div id="explanation-area" style="display:none">
+    <div class="explanation-box">
+      <div class="explanation-result" id="exp-result"></div>
+      <div class="explanation-answer" id="exp-answer"></div>
+      <div class="explanation-text" id="exp-text"></div>
+    </div>
+    <button class="next-btn" id="next-btn" onclick="nextQuestion()">下一題 →</button>
+    <button class="end-early-btn" onclick="confirmEndEarly()">⏹ 提前結束本次練習</button>
+  </div>
+</div>
+
+<!-- RESULT -->
+<div class="screen" id="screen-result">
+  <div class="result-header">
+    <div class="result-score-ring">
+      <div class="result-score-num" id="result-score">85</div>
+      <div class="result-score-denom">/ 100</div>
+    </div>
+    <div class="result-title" id="result-title">不錯！繼續加油</div>
+    <div class="result-sub" id="result-sub">換算100分制成績</div>
+  </div>
+  <div class="result-stats">
+    <div class="result-stat">
+      <div class="result-stat-num" id="r-correct" style="color:var(--green)">0</div>
+      <div class="result-stat-label">答對</div>
+    </div>
+    <div class="result-stat">
+      <div class="result-stat-num" id="r-wrong" style="color:var(--red)">0</div>
+      <div class="result-stat-label">答錯</div>
+    </div>
+  </div>
+  <div class="result-actions">
+    <button class="result-btn result-btn-primary" onclick="goTo('screen-home')">回首頁</button>
+    <button class="result-btn result-btn-secondary" onclick="goTo('screen-errors')">查看錯題回顧</button>
+    <button class="result-btn result-btn-secondary" onclick="goTo('screen-setup')">再練一次</button>
+  </div>
+  <div id="wrong-list-area"></div>
+</div>
+
+<!-- OVERVIEW -->
+<div class="screen" id="screen-overview">
+  <div class="setup-header">
+    <button class="back-btn" onclick="goTo('screen-home')">← 返回</button>
+    <div class="setup-title">全覽題目</div>
+  </div>
+  <div class="overview-filter">
+    <button class="filter-btn active" id="ov-all" onclick="setOvFilter('all')">全部</button>
+    <button class="filter-btn" id="ov-light" onclick="setOvFilter('light')">一點點不熟</button>
+    <button class="filter-btn" id="ov-heavy" onclick="setOvFilter('heavy')">很不熟</button>
+  </div>
+  <div id="overview-list"></div>
+</div>
+
+<!-- ERRORS -->
+<div class="screen" id="screen-errors">
+  <div class="setup-header">
+    <button class="back-btn" onclick="goTo('screen-home')">← 返回</button>
+    <div class="setup-title">錯題回顧</div>
+  </div>
+  <div id="error-list"></div>
+</div>
+
+<script>
+// ─── QUESTION DATA ─────────────────────────────────────────────────────────
+
+const QUESTIONS = {
+  // ── 一點點不熟 ──
+  'ch1_18': {
+    ch:1, num:18, pool:'light',
+    text:'於何處進行遙控無人機飛航活動適用民用航空法之「遙控無人機」相關規定？',
+    opts:{A:'建築物內密閉空間',B:'建築物外開放空間',C:'任何空間',D:'以上皆非'},
+    ans:'B',
+    exp:'【關鍵字：建築物「外」】民航法只管室外天空！室內場館比賽不在規範內。記憶：牆壁擋住就沒有民航局的事。',
+    related:[]
+  },
+  'ch1_22': {
+    ch:1, num:22, pool:'light',
+    text:'直轄市、縣（市）政府依民航法第99條之13第2項所規範之區域內，得依公益及安全需要，進行哪些項目之公告？',
+    opts:{A:'遙控無人機活動區域',B:'遙控無人機活動時間',C:'其他管理事項',D:'以上皆是'},
+    ans:'D',
+    exp:'【地點＋時間＋其他，全包選D】縣市政府有完整管理權，三項全都能管：活動區域、活動時間、其他管理事項。\n\n延伸知識：中央主管機關想禁飛，也要提請縣市政府公告（不能自己直接公告）。違反縣市公告的罰款是3萬-15萬。',
+    related:['ch1_23','ch1_25','ch1_48']
+  },
+  'ch1_23': {
+    ch:1, num:23, pool:'light',
+    text:'中央主管機關認有禁止或限制遙控無人機飛航活動需求者，得提請所在地哪個機關進行公告？',
+    opts:{A:'鄉鎮區公所',B:'直轄市、縣（市）政府',C:'地方派出所',D:'地方農會'},
+    ans:'B',
+    exp:'【中央提請→地方公告】中央想禁飛，要「委託」縣市政府幫忙公告。記憶：中央不能自己直接貼公告，要找地方。',
+    related:['ch1_22','ch1_25']
+  },
+  'ch1_25': {
+    ch:1, num:25, pool:'light',
+    text:'政府機關（構）、學校或法人因執行業務需於直轄市、縣（市）政府所公告之遙控無人機活動區域、時間及其他管理事項外從事飛航活動者，應申請何者會商相關中央主管機關同意後，始得為之？',
+    opts:{A:'直轄市、縣（市）政府',B:'衛福部',C:'農委會',D:'交通部'},
+    ans:'A',
+    exp:'【誰家地盤找誰申請→縣市政府】縣市政府公告的區域外想飛，就向縣市政府申請。\n\n延伸：如果是跨縣市飛航，要從「起飛地」所在縣市政府提出申請，並取得飛越縣市的同意，不是找終點地的縣市政府。',
+    related:['ch1_22','ch1_23','ch1_111']
+  },
+  'ch1_42': {
+    ch:1, num:42, pool:'light',
+    text:'政府機關（構）、學校或法人於從事民航局核准之遙控無人機飛航活動前，應依法投保責任保險，係依據何法所定之內容？',
+    opts:{A:'保險法',B:'民用航空法',C:'民法',D:'勞動基準法'},
+    ans:'B',
+    exp:'【無人機的一切都在民用航空法】遇到無人機相關法規依據選項，幾乎都選民用航空法，不是保險法、不是民法、不是勞基法。\n\n記憶：未投保或未足額投保就飛，罰款是6萬-30萬＋禁止活動，跟無照操作同等級。',
+    related:['ch1_46']
+  },
+  'ch1_51': {
+    ch:1, num:51, pool:'light',
+    text:'遙控無人機和遙控設備間為操作飛行管理目的之資料鏈接，稱之？',
+    opts:{A:'網路鏈路',B:'通訊及控制信號鏈路',C:'電信鏈路',D:'光纖鏈路'},
+    ans:'B',
+    exp:'【通訊＋控制＋信號，三個詞都要有】就是遙控器和飛機之間的電波連結，英文叫C2 Link（Command & Control Link）。注意不是「網路鏈路」或「電信鏈路」。',
+    related:[]
+  },
+  'ch1_56': {
+    ch:1, num:56, pool:'light',
+    text:'無人多旋翼機具有幾個以上之垂直傳動軸？',
+    opts:{A:'2個以上',B:'3個以上',C:'4個以上',D:'6個以上'},
+    ans:'B',
+    exp:'【Multi = 多 = 最少3】三旋翼（Tricopter）就是最小的多旋翼機，3個垂直傳動軸起跳。不是4或6，是3。',
+    related:[]
+  },
+  'ch1_66': {
+    ch:1, num:66, pool:'light',
+    text:'遙控無人機之設計、製造、改裝，可由何者提出型式檢驗申請？',
+    opts:{A:'設計者',B:'製造者',C:'改裝者',D:'以上皆可'},
+    ans:'D',
+    exp:'【設計者、製造者、改裝者都行→選D以上皆可】三種人都可提型式檢驗申請，向民航局申請。\n\n重要延伸：改裝後已通過型式檢驗的無人機，改裝後要重新申請型式檢驗！相反，沒有改裝的情況下，通過後不需要定期再驗。',
+    related:['ch1_70','ch1_72','ch1_91','ch1_130']
+  },
+  'ch1_70': {
+    ch:1, num:70, pool:'light',
+    text:'最大起飛重量25公斤以上之遙控無人機，為確保其符合設計、製造、改裝之性能諸元，應由何者提出實體檢驗申請？',
+    opts:{A:'操作人',B:'所有人',C:'設計者',D:'製造者'},
+    ans:'B',
+    exp:'【25公斤以上→所有人申請實體檢驗】誰的飛機誰負責！實體檢驗由所有人（擁有者）提出申請，向民航局申請。\n\n區別：型式檢驗是設計者/製造者/改裝者申請；實體檢驗是所有人申請。一個管設計製造面，一個管持有使用面。',
+    related:['ch1_72','ch1_66']
+  },
+  'ch1_72': {
+    ch:1, num:72, pool:'light',
+    text:'自行製造、使用之最大起飛重量25公斤以上遙控無人機，何人可提出合併型式檢驗及實體檢驗之申請？',
+    opts:{A:'製造者',B:'操作人',C:'所有人',D:'設計者'},
+    ans:'C',
+    exp:'【自製自用→所有人合併申請】自己製造自己使用，所有人（本身就是製造者兼使用者）可合併申請型式+實體檢驗。\n\n高頻陷阱：25公斤以上實體檢驗，答案都是「所有人」，但每題選項位置不同！一般實體檢驗申請（第70題）答案在B，本題合併申請答案在C，千萬別對換。',
+    related:['ch1_70']
+  },
+
+  // ── 很不熟 ──
+  'ch1_29': {
+    ch:1, num:29, pool:'heavy',
+    text:'從事休閒娛樂用途之遙控無人機活動，其飛航實際高度不得逾距地面或水面多少高度？',
+    opts:{A:'800呎',B:'400呎',C:'200呎',D:'100呎'},
+    ans:'B',
+    exp:'【400呎是紅線！】400呎 ≈ 122公尺，大約40層樓高。超過400呎是最重罰款：30萬-150萬＋廢操作證＋得沒入無人機。\n\n重要：就算活動已申請核准，400呎限制仍然有效！核准的是「能不能飛」，不是「能飛多高」。要解除高度限制需另外申請。',
+    related:['ch1_44','ch1_116']
+  },
+  'ch1_43': {
+    ch:1, num:43, pool:'heavy',
+    text:'遙控無人機所有人或操作人違反「禁航區、限航區及航空站或飛行場四周之一定距離範圍內從事飛航活動」之相關規定者，民航局除廢止其操作證並得沒入遙控無人機外，另處多少新臺幣之罰鍰？',
+    opts:{A:'3萬元以上18萬元以下',B:'5萬元以上28萬元以下',C:'10萬元以上48萬元以下',D:'30萬元以上150萬元以下'},
+    ans:'D',
+    exp:'【罰款八兄弟對照表—全部背起來！】\n\n🔴 最重 30萬-150萬（＋廢操作證＋得沒入無人機）：\n・飛入禁/限航區\n・超過400呎\n\n🟠 中等 6萬-30萬（＋禁止活動＋得沒入）：\n・未領有操作證\n・未投保或未足額投保責任保險\n\n🟡 較輕 3萬-15萬（＋禁止活動＋得沒入）：\n・未辦理註冊或標明註冊號碼\n・違反直轄市縣市政府公告事項\n・違反遙控無人機飛航活動應遵守之規定\n\n⚪ 特殊 1萬-150萬（範圍最廣）：\n・違反射頻識別、檢驗、認可、通報等技術性規定\n\n口訣：最危險的行為罰最重！禁區＋超高 = 三十萬起跳'
+  },
+  'ch1_44': {
+    ch:1, num:44, pool:'heavy',
+    text:'遙控無人機所有人或操作人違反「不得逾距地面或水面高度400呎從事飛航活動」之規定者，民航局除廢止其操作證並得沒入遙控無人機外，另處多少新臺幣之罰鍰？',
+    opts:{A:'30萬元以上150萬元以下',B:'1萬元以上10萬元以下',C:'20萬元以上50萬元以下',D:'5萬元以上30萬元以下'},
+    ans:'A',
+    exp:'【超高跟飛禁區一樣重罰：30萬-150萬！】超過400呎是罰款最重的兩項之一（另一項是飛入禁限航區），兩者都是30萬-150萬＋廢操作證＋得沒入無人機。\n\n注意：本題正確答案是A（30萬-150萬）。選項順序和飛入禁區那題不同，不要被位置騙了！',
+    related:['ch1_43','ch1_29','ch1_116']
+  },
+  'ch1_45': {
+    ch:1, num:45, pool:'heavy',
+    text:'遙控無人機之所有人或操作人違反「未領有操作證而操作遙控無人機」之規定者，除禁止其活動，情節重大者並得沒入遙控無人機外，另處多少新臺幣之罰鍰？',
+    opts:{A:'1萬元以上8萬元以下',B:'3萬元以上18萬元以下',C:'6萬元以上30萬元以下',D:'8萬元以上38萬元以下'},
+    ans:'C',
+    exp:'【無照操作 = 6萬-30萬】沒有操作證就飛 → 6萬-30萬＋禁止活動＋得沒入無人機。\n\n罰款層級記憶：\n🔴 最重（30萬-150萬）：飛入禁限區、超400呎\n🟠 中等（6萬-30萬）：未領操作證（本題）、未投保\n🟡 較輕（3萬-15萬）：未辦理註冊、違縣市公告、違飛航規定',
+    related:['ch1_43','ch1_46']
+  },
+  'ch1_46': {
+    ch:1, num:46, pool:'heavy',
+    text:'遙控無人機之所有人或操作人違反「未投保或未足額投保責任保險而從事遙控無人機活動」之規定者，除禁止其活動，情節重大者並得沒入遙控無人機外，另處多少新臺幣之罰鍰？',
+    opts:{A:'6萬元以上30萬元以下',B:'3萬元以上20萬元以下',C:'1萬元以上8萬元以下',D:'8萬元以上50萬元以下'},
+    ans:'A',
+    exp:'【未投保 = 6萬-30萬，與無照同等級】投保義務依據「民用航空法」（不是保險法！）。沒保險就飛跟沒有證飛一樣嚴重，都是6萬-30萬＋禁止活動＋得沒入。\n\n罰款層級：🔴最重30萬 → 🟠中等6萬（本題、未領操作證）→ 🟡較輕3萬',
+    related:['ch1_43','ch1_45','ch1_42']
+  },
+  'ch1_47': {
+    ch:1, num:47, pool:'heavy',
+    text:'遙控無人機之所有人或操作人違反「遙控無人機註冊或標明註冊號碼」之相關規定者，除禁止其活動，情節重大者並得沒入遙控無人機外，另處多少新臺幣之罰鍰？',
+    opts:{A:'10萬元以上48萬元以下',B:'8萬元以上38萬元以下',C:'5萬元以上28萬元以下',D:'3萬元以上15萬元以下'},
+    ans:'D',
+    exp:'【未辦理註冊 = 3萬-15萬（最輕那一層）】本題答案在D（3萬-15萬），注意選項順序！\n\n同屬3萬-15萬這層的還有：違反縣市公告、違反飛航規定。\n\n記憶：3萬這層是「行政漏洞」類（沒登記、沒公告遵守），不是直接危害飛安，所以罰最輕。',
+    related:['ch1_43','ch1_48','ch1_49','ch1_97']
+  },
+  'ch1_48': {
+    ch:1, num:48, pool:'heavy',
+    text:'遙控無人機之所有人或操作人違反「直轄市、縣（市）政府公告之區域、時間及其他管理事項」之相關規定者，除禁止其活動，情節重大者並得沒入遙控無人機外，另處多少新臺幣之罰鍰？',
+    opts:{A:'3萬元以上15萬元以下',B:'5萬元以上28萬元以下',C:'8萬元以上38萬元以下',D:'15萬元以上30萬元以下'},
+    ans:'A',
+    exp:'【違反縣市公告 = 3萬-15萬】本題答案在A，注意選項順序！\n\n縣市政府可公告管理三項：活動區域、活動時間、其他管理事項。違反任何一項都是3萬-15萬＋禁止活動＋得沒入。\n\n3萬這層共三種：未辦理註冊、違縣市公告（本題）、違飛航規定。',
+    related:['ch1_43','ch1_47','ch1_49','ch1_22']
+  },
+  'ch1_49': {
+    ch:1, num:49, pool:'heavy',
+    text:'遙控無人機之所有人或操作人違反「遙控無人機飛航活動應遵守之規定」者，除禁止其活動，情節重大者並得沒入遙控無人機外，另處多少新臺幣之罰鍰？',
+    opts:{A:'10萬元以上48萬元以下',B:'8萬元以上38萬元以下',C:'5萬元以上28萬元以下',D:'3萬元以上15萬元以下'},
+    ans:'D',
+    exp:'【違反飛航規定 = 3萬-15萬，本題答案在D！】同屬最輕罰款層的還有：未辦理註冊、違反縣市公告。\n\n陷阱：選項A是最高罰（10萬-48萬），長得像高罰款但這題是最輕的，別被騙！答案是D（3萬-15萬）。',
+    related:['ch1_43','ch1_47','ch1_48']
+  },
+  'ch1_50': {
+    ch:1, num:50, pool:'heavy',
+    text:'違反「射頻識別、檢驗、認可、維修與檢查、飛航活動之活動許可及內容、製造者與進口者之登錄及責任、飛航安全相關事件之通報等事項」規定者，除禁止其活動，情節重大者並得沒入遙控無人機外，另處多少新臺幣之罰鍰？',
+    opts:{A:'1萬元以上150萬元以下',B:'5萬元以上498萬元以下',C:'8萬元以上798萬元以下',D:'10萬元以上998萬元以下'},
+    ans:'A',
+    exp:'【特殊！1萬-150萬，範圍最廣跨度最大】這條包山包海（射頻識別、檢驗、認可、通報等技術性義務）。\n\n記憶重點：上限150萬和飛禁區一樣高，但下限只要1萬，跨度超大！其他層級都是固定幾萬，只有這條是1萬起跳。',
+    related:['ch1_43']
+  },
+  'ch1_74': {
+    ch:1, num:74, pool:'heavy',
+    text:'實體檢驗合格證或特種實體檢驗合格證之記載事項如有變更時，下列敘述何者正確？',
+    opts:{A:'製造者應於事實發生日起15日內申請換發',B:'設計者應於事實發生日起10日內申請換發',C:'操作人應於事實發生日起7日內申請換發',D:'所有人應於事實發生日起15日內申請換發'},
+    ans:'D',
+    exp:'【實體檢驗合格證記載變更→所有人15天換發】關鍵詞三個：「所有人」「15天」「民航局」。不是製造者、不是設計者、不是操作人！\n\n同樣是「所有人15天向民航局」的還有：無人機發生滅失，所有人也是15天內向民航局申請註銷。記憶：15天，都找民航局，都是所有人的責任。',
+    related:['ch1_98']
+  },
+  'ch1_86': {
+    ch:1, num:86, pool:'heavy',
+    text:'政府機關（構）、學校或法人欲於直轄市、縣（市）政府公告之禁止、限制區域內從事遙控無人機飛航活動者，應至少於活動日前多久檢附計畫書提出申請？',
+    opts:{A:'30日前',B:'20日前',C:'15日前',D:'10日前'},
+    ans:'C',
+    exp:'【縣市公告禁限區→活動日前15天提申請】\n\n申請期限三兄弟：\n・縣市公告禁止/限制區域（本題）→ 15天前\n・禁限航區及航空站四周（一般）→ 15天前\n・軍事航空管理的禁限航區 → 30天前\n\n口訣：一般禁區15天，軍事加倍30天！',
+    related:['ch1_109','ch1_110','ch1_111']
+  },
+  'ch1_87': {
+    ch:1, num:87, pool:'heavy',
+    text:'最大起飛重量2公斤以上且裝置導航設備之遙控無人機遭受實質損害或失蹤時，所有人或操作人應於發生或得知消息後多久內填具飛航安全相關事件報告表通報民航局？',
+    opts:{A:'6小時內',B:'12小時內',C:'24小時內',D:'48小時內'},
+    ans:'C',
+    exp:'【損害或失蹤→24小時內通報民航局】2公斤以上且裝導航設備的無人機出事要通報。\n\n「發生或得知消息後」24小時，不是「立即」也不是「12小時」。碰撞其他航空器或障礙物也是一樣24小時內通報。記憶：出事不超過一天，都是24小時。',
+    related:['ch1_88']
+  },
+  'ch1_88': {
+    ch:1, num:88, pool:'heavy',
+    text:'當遙控無人機發生與其他航空器或障礙物接近或碰撞之事故時，所有人或操作人應於發生或得知消息後多久內填具飛航安全相關事件報告表通報民航局？',
+    opts:{A:'6小時內',B:'12小時內',C:'24小時內',D:'48小時內'},
+    ans:'C',
+    exp:'【碰撞或接近其他航空器→24小時內通報民航局】損害/失蹤和碰撞，兩種狀況通報期限一模一樣，都是24小時內。\n\n陷阱：6小時、12小時都是錯的，正確答案永遠是24小時（C選項）。',
+    related:['ch1_87']
+  },
+  'ch1_91': {
+    ch:1, num:91, pool:'heavy',
+    text:'遙控無人機經型式檢驗合格後，除因改裝需重新辦理檢驗及註冊異動外，是否需再辦理定期檢驗？',
+    opts:{A:'仍需再辦理定期檢驗',B:'無需再辦理定期檢驗',C:'操作人認為有需要則應再辦理定期檢驗',D:'所有人認為有需要則應再辦理定期檢驗'},
+    ans:'B',
+    exp:'【型式檢驗通過後，不需要定期再驗】記憶：改 = 重來，沒改 = 不用再驗。\n\n唯一例外：改裝後必須重新申請型式檢驗！所以答案是B「無需再辦理定期檢驗」，但前提是沒有改裝。',
+    related:['ch1_130','ch1_66']
+  },
+  'ch1_93': {
+    ch:1, num:93, pool:'heavy',
+    text:'操作人未經獲准從事視距外之遙控無人機飛航活動，除不得使用矯正鏡片外之任何工具做延伸視距飛航外，另須遵守哪項飛航範圍限制？',
+    opts:{A:'須於信號鏈路有效範圍內操作',B:'須於目視範圍內操作',C:'須於自動駕駛有效範圍內操作',D:'須於安全油量範圍內操作'},
+    ans:'B',
+    exp:'【未取得視距外許可→只能肉眼目視範圍內操作】望遠鏡不行！只有「矯正鏡片」（近視/老花眼鏡）才被允許。\n\n延伸視距飛航的定義：操作人在視距外→必須有目視觀察員在無人機半徑300公尺內→觀察員要與無人機保持直接目視接觸→並提供必要飛航資訊給操作人。',
+    related:['ch1_95','ch1_115']
+  },
+  'ch1_95': {
+    ch:1, num:95, pool:'heavy',
+    text:'遙控無人機管理規則針對「延伸視距飛航」之定義，下列何者為非？',
+    opts:{A:'操作人須於視距外操作',B:'目視觀察員須距遙控無人機半徑三百公尺範圍內',C:'操作人應自目視觀察員獲取必要飛航資訊',D:'目視觀察員不須與遙控無人機保持直接目視接觸'},
+    ans:'D',
+    exp:'【本題問「哪個是非（錯的）」→選D】\n\nD說「目視觀察員不須與無人機保持直接目視接觸」→這是錯的！\n正確規定：觀察員「必須」直接目視，不能用望遠鏡替代。\n\nA、B、C都是正確規定：\n・操作人在視距外（A正確）\n・觀察員在無人機半徑300公尺內（B正確）\n・操作人從觀察員獲取飛航資訊（C正確）',
+    related:['ch1_93','ch1_115']
+  },
+  'ch1_97': {
+    ch:1, num:97, pool:'heavy',
+    text:'針對自然人所有之遙控無人機，法規明訂其最大起飛重量達多少以上，即應辦理註冊？',
+    opts:{A:'250公克以上',B:'1公斤以上',C:'2公斤以上',D:'15公斤以上'},
+    ans:'A',
+    exp:'【重量門檻全圖—一次背清楚！】\n・250公克以上 → 須辦理「註冊」（本題）\n・1公斤以上（裝導航）→ 須內建禁飛區「圖資系統」\n・未達15公斤（裝導航）→ 「普通操作證」可操作\n・15公斤 → 普通/專業操作證分水嶺\n・25公斤以上 → 須申請「實體檢驗」\n・未達25公斤（裝導航）→ 最大飛行速度不超過87節\n\n記憶：250g→登記，1kg→地圖，15kg→換證，25kg→驗機',
+    related:['ch1_100','ch1_102','ch1_103','ch1_108']
+  },
+  'ch1_98': {
+    ch:1, num:98, pool:'heavy',
+    text:'遙控無人機發生滅失情形者，其所有人申請註銷註冊之程序為何？',
+    opts:{A:'事實發生日起15日內向民航局申請',B:'事實發生日起20日內向民航局申請',C:'事實發生日起15日內向所在地方政府申請',D:'事實發生日起20日內向所在地方政府申請'},
+    ans:'A',
+    exp:'【飛機消失→所有人15天向民航局申請註銷】三個關鍵：「所有人」「15天」「民航局」（不是地方政府！）。\n\n同樣是「所有人15天向民航局」的還有：實體檢驗合格證記載事項變更，也是所有人15天向民航局申請換發。\n\n陷阱：選項C和D是找「地方政府」，直接排除。',
+    related:['ch1_74']
+  },
+  'ch1_99': {
+    ch:1, num:99, pool:'heavy',
+    text:'遙控無人機註冊號碼之有效期限為幾年？',
+    opts:{A:'1年',B:'2年',C:'3年',D:'4年'},
+    ans:'B',
+    exp:'【註冊號碼有效期 = 2年】\n\n有效期對照表：\n・註冊號碼 → 2年（本題）\n・飛航紀錄保存 → 2年\n・實體檢驗合格證 → 3年\n\n記憶：牌照和記錄都是2年，機體驗更久是3年。',
+    related:['ch1_101','ch1_113']
+  },
+  'ch1_100': {
+    ch:1, num:100, pool:'heavy',
+    text:'法規規定最大起飛重量達多少以上且裝置導航設備之遙控無人機，應具備防止其進入禁、限航區及航空站或飛行場四周一定距離範圍內之圖資軟體系統？',
+    opts:{A:'250公克以上',B:'1公斤以上',C:'2公斤以上',D:'15公斤以上'},
+    ans:'B',
+    exp:'【1公斤有導航→強制內建禁飛區地圖】超過1公斤且裝有導航設備，要有防止進入禁限航區的圖資軟體系統。\n\n重量門檻整理：250g以上→辦理註冊；1kg以上（裝導航）→要有圖資系統；15kg是操作證分水嶺；25kg以上要申請實體檢驗。',
+    related:['ch1_97','ch1_102','ch1_103']
+  },
+  'ch1_101': {
+    ch:1, num:101, pool:'heavy',
+    text:'遙控無人機實體檢驗合格證之有效期限為幾年？',
+    opts:{A:'1年',B:'2年',C:'3年',D:'4年'},
+    ans:'C',
+    exp:'【實體檢驗合格證 = 3年】比牌照（註冊號碼）的2年多一年，比飛航紀錄保存期（2年）也長一年。\n\n記憶：「牌照2年、紀錄2年、機體3年，機器最耐用」。',
+    related:['ch1_99','ch1_113']
+  },
+  'ch1_102': {
+    ch:1, num:102, pool:'heavy',
+    text:'持有普通操作證之自然人，依規定得操作下列哪個重量級距之遙控無人機？',
+    opts:{A:'15公斤以上之遙控無人機',B:'25公斤以上之遙控無人機',C:'未達15公斤且裝置導航設備之遙控無人機',D:'30公斤以上之遙控無人機'},
+    ans:'C',
+    exp:'【普通操作證 = 未達15公斤且裝導航設備】注意是「未達15公斤」且「裝置導航設備」兩個條件缺一不可。\n\n對照：專業操作證可以飛15公斤以上（含）的機型。學習操作證則限制在15公斤以下，且需要普通/專業操作人在旁指導。',
+    related:['ch1_103','ch1_97','ch1_105']
+  },
+  'ch1_103': {
+    ch:1, num:103, pool:'heavy',
+    text:'持有普通操作證及專業操作證對於可操控之遙控無人機重量界線為何？',
+    opts:{A:'1公斤',B:'2公斤',C:'15公斤',D:'25公斤'},
+    ans:'C',
+    exp:'【15公斤是分水嶺！】未達15kg → 普通操作證；15kg以上 → 專業操作證。記憶：「普通飛小的，專業飛大的，15公斤是分界」。\n\n延伸：學習操作證也是15公斤上限，但需要有普通/專業操作人在旁指導監護。',
+    related:['ch1_102','ch1_105']
+  },
+  'ch1_105': {
+    ch:1, num:105, pool:'heavy',
+    text:'針對專業操作證之敘述，下列何者正確？',
+    opts:{A:'分為初、中、高等3級',B:'持有者僅須通過學科測驗',C:'持有者得執行獲核准之法人委託業務',D:'持有者無須經過體格檢查'},
+    ans:'C',
+    exp:'【專業操作證正確答案C：可執行獲核准之法人委託業務】四個選項逐一破解：\n\n・A「分為初、中、高等3級」→ 錯！專業操作證分一級、二級（不是三級）\n・B「持有者僅須通過學科測驗」→ 錯！需要學科+術科+體格檢查\n・C「持有者得執行獲核准之法人委託業務」→ 正確！\n・D「持有者無須經過體格檢查」→ 錯！需要體格檢查',
+    related:['ch1_102','ch1_103','ch1_106']
+  },
+  'ch1_106': {
+    ch:1, num:106, pool:'heavy',
+    text:'申請遙控無人機專業操作證者，其術科測驗應於學科測驗通過日起多久內完成？',
+    opts:{A:'3個月內',B:'6個月內',C:'9個月內',D:'1年內'},
+    ans:'D',
+    exp:'【學科通過→1年內完成術科，否則重考學科】本題問的是「專業操作證」，答案是1年（D選項）。\n\n陷阱：選項A是3個月、B是6個月、C是9個月，都是干擾。唯一正確的是D：1年。超過1年沒完成術科就要重頭再考學科。',
+    related:['ch1_105']
+  },
+  'ch1_107': {
+    ch:1, num:107, pool:'heavy',
+    text:'操作人操作遙控無人機時，血液中酒精濃度依法不得超過多少？',
+    opts:{A:'0.01%',B:'0.02%',C:'0.04%',D:'0.06%'},
+    ans:'B',
+    exp:'【飛無人機比開車更嚴格：0.02%】台灣開車酒測標準是0.05%，飛無人機要求更嚴的0.02%，不到開車標準的一半！記憶：「飛機要超清醒：0.02%，幾乎滴酒不沾」。',
+    related:[]
+  },
+  'ch1_108': {
+    ch:1, num:108, pool:'heavy',
+    text:'最大起飛重量未達25公斤且裝置導航設備之遙控無人機，其最大飛行速度不得超過多少？',
+    opts:{A:'70海浬/小時',B:'87海浬/小時',C:'100海浬/小時',D:'150海浬/小時'},
+    ans:'B',
+    exp:'【87節！就記這個數字】87海浬/小時 ≈ 161公里/小時。四個選項70、87、100、150，正確是87。記憶：「87節，不是整數，特別記一下，選87」。完整重量門檻見Q97。',
+    related:['ch1_97']
+  },
+  'ch1_109': {
+    ch:1, num:109, pool:'heavy',
+    text:'政府機關（構）、學校或法人欲於禁、限航區及航空站或飛行場四周一定距離範圍內從事遙控無人機飛航活動者，應於活動日前多久提出申請？',
+    opts:{A:'15日前',B:'10日前',C:'5日前',D:'3日前'},
+    ans:'A',
+    exp:'【禁限航區及航空站→活動日前15天提申請】\n\n申請期限記憶：\n・縣市公告禁止/限制區域 → 15天前\n・禁限航區及航空站四周（本題）→ 15天前\n・軍事航空管理的禁限航區 → 30天前（加倍！）\n\n跨縣市飛航：從起飛地縣市政府提申請，並取得飛越縣市同意。',
+    related:['ch1_86','ch1_110','ch1_111']
+  },
+  'ch1_110': {
+    ch:1, num:110, pool:'heavy',
+    text:'政府機關（構）、學校或法人於涉及軍事航空管理機關（構）管理之禁、限航區及航空站或飛行場四周一定距離範圍內從事遙控無人機飛航活動者，應於活動日前多久提出申請？',
+    opts:{A:'30日前',B:'20日前',C:'15日前',D:'10日前'},
+    ans:'A',
+    exp:'【軍事禁限航區→加倍，30天前申請】一般禁限航區只要15天前申請，軍事管理的直接加倍變30天！記憶：「軍事最嚴，提前一個月，選A（30天）」。',
+    related:['ch1_86','ch1_109']
+  },
+  'ch1_111': {
+    ch:1, num:111, pool:'heavy',
+    text:'政府機關（構）、學校或法人於直轄市、縣（市）政府公告之禁止、限制區域內從事遙控無人機飛航活動時，如有跨縣市飛航情形，應向哪個機關提出申請？',
+    opts:{A:'飛經之直轄市、縣（市）政府',B:'起飛地點所在直轄市、縣（市）政府提出申請，經所在地及跨縣市政府同意',C:'降落地點所在直轄市、縣（市）政府',D:'降落地點所鄰近直轄市、縣（市）政府'},
+    ans:'B',
+    exp:'【跨縣市飛航：從起飛地縣市申請，路過縣市要同意】四個選項只有B正確：「起飛地點所在直轄市、縣（市）政府提出申請，經所在地及跨縣市政府同意」。\n\n記憶：出發地點管申請，路過的縣市要點頭，不是找終點的縣市、也不是找飛經的縣市。',
+    related:['ch1_86','ch1_109','ch1_25']
+  },
+  'ch1_112': {
+    ch:1, num:112, pool:'heavy',
+    text:'當災害發生時，欲於各級政府依災害防救法劃定之警戒區域或指定區域內從事遙控無人機飛航活動者，應聽從何者之統一指揮調度？',
+    opts:{A:'民航局局長',B:'當地警察局局長',C:'當地消防局局長',D:'各級政府災害應變中心指揮官'},
+    ans:'D',
+    exp:'【災害時最高指揮是「災害應變中心指揮官」】不是民航局長、警察局長、消防局長！記憶：「災害→災害應變中心，最大的BOSS，全部聽它的」。',
+    related:[]
+  },
+  'ch1_113': {
+    ch:1, num:113, pool:'heavy',
+    text:'政府機關（構）、學校或法人依法應保存遙控無人機之註冊號碼、活動日期、活動區域、飛航時間、飛航性質、操作人員姓名、維護或修理、改裝等紀錄，並應保存多久？',
+    opts:{A:'1年',B:'2年',C:'3年',D:'5年'},
+    ans:'B',
+    exp:'【飛航紀錄保存2年】保存期限對照：\n・飛航紀錄（本題）→ 2年\n・註冊號碼有效期 → 2年\n・實體檢驗合格證 → 3年\n\n記憶：紀錄和牌照都是2年，機體驗更久要3年。',
+    related:['ch1_99','ch1_101']
+  },
+  'ch1_114': {
+    ch:1, num:114, pool:'heavy',
+    text:'有關外國人領有外國政府所核發遙控無人機相關證照者，應向民航局申請認可後使得於本區從事遙控無人機飛航活動之規定，是否亦適用於領有外國政府核發證照之本國人？',
+    opts:{A:'是，本國人亦適用',B:'否，本國人不適用',C:'視活動時間決定適用與否',D:'視活動性質決定適用與否'},
+    ans:'B',
+    exp:'【本國人不適用外國人認可程序！】台灣人即使拿到其他國家的操作證，也不走「外國人認可」那套程序，必須直接依台灣民航局規定取得本地操作證。\n\n反之：外籍人士在台飛無人機，一定要先取得民航局認可，不管在哪個國家考了什麼證。',
+    related:['ch1_123']
+  },
+  'ch1_115': {
+    ch:1, num:115, pool:'heavy',
+    text:'某合格無人機業務團隊...成員臨時決定仍將無人機飛至工作區，並以望遠鏡保持與其間之視線接觸。請問該團隊之決定是否違反無人機相關規範？',
+    opts:{A:'並無違反遙控無人機相關規範',B:'已違反遙控無人機相關規範',C:'有無違反規範視任務執行結果而定',D:'資訊不足，無法判斷'},
+    ans:'B',
+    exp:'【望遠鏡違規！只有矯正鏡片OK】法規明定：未取得視距外許可，「除矯正鏡片外」不得使用任何工具做延伸視距飛航。望遠鏡不是矯正鏡片，這樣做已違規，答案是B（已違反規範）。\n\n延伸視距飛航的正確做法：要有目視觀察員在無人機半徑300公尺內，且觀察員必須直接目視無人機。',
+    related:['ch1_93','ch1_95']
+  },
+  'ch1_116': {
+    ch:1, num:116, pool:'heavy',
+    text:'某無人機團隊獲准於機場跑道上空測試某項酬載功能，有人建議飛得越高越能展現測試成果，請問操作人對於該建議應有哪項認知？',
+    opts:{A:'活動既經核准，即無飛航高度限制，想飛多高就多高',B:'飛航高度未經核准，仍應遵守距地表面不得逾400呎之規定',C:'飛航高度聽從現場指揮人員視任務執行狀況決定',D:'飛航高度視能見度好壞決定'},
+    ans:'B',
+    exp:'【活動核准≠高度自由！400呎永遠有效】活動許可核准的是「能不能飛」，不是「能飛多高」。400呎（≈122公尺）限制是基本法規，要解除必須另外申請高度核准，否則仍受400呎限制。超過400呎最重罰款：30萬-150萬＋廢操作證。',
+    related:['ch1_29','ch1_44']
+  },
+  'ch1_123': {
+    ch:1, num:123, pool:'heavy',
+    text:'國內某無人機團隊有名外籍成員，雖領有該國政府所核發之合格無人機操作證，惟尚未獲得本國民航局認可。針對該名外籍成員欲參與團隊於本國境內之無人機飛航活動之敘述，下列何者正確？',
+    opts:{A:'該員已領有外國政府核發證照，理當可於本國境內從事飛航活動',B:'如該員已具備無人機操作經歷滿3年以上，即可直接於本國境內從事飛航活動',C:'該員必須獲得本國民航局認可，使得於本國境內從事飛航活動',D:'只要無人機團隊有人願簽切結書擔保活動之安全，該員即可於本國境內從事飛航活動'},
+    ans:'C',
+    exp:'【外籍人士在台飛→必須取得民航局認可！】不管在哪個國家考了什麼等級的操作證、飛了多久，在台灣就是要民航局點頭認可才行。\n\n注意：本國人即使也持有外國政府核發的證照，不走這套認可程序，直接依台灣規定取得本地操作證。',
+    related:['ch1_114']
+  },
+  'ch1_130': {
+    ch:1, num:130, pool:'heavy',
+    text:'無人機團隊因任務需要，為其所有之一架已取得型式檢驗合格證之無人機進行改裝行為，請問該團隊針對無人機改裝後之應有認知，下列何者正確？',
+    opts:{A:'改裝者應檢附申請書向民航局再次申請型式檢驗',B:'改裝行為並不影響型式檢驗之效力，無須再進行任何檢驗',C:'該團隊能擔保改裝行為不影響無人機飛航性能及安全，即不須再進行任何檢驗',D:'由主管機關自由判定改裝行為是否須進行重新檢驗'},
+    ans:'A',
+    exp:'【改裝後→一定要重新申請型式檢驗！】改裝者檢附申請書向民航局重新申請，這是本題答案A。\n\n對照：若沒有改裝，型式檢驗通過後不需要定期再驗（無需定期檢驗）。記憶：「沒改免驗，改了重來」，改裝是打破原本型式檢驗效力的唯一情況。',
+    related:['ch1_91','ch1_66']
+  },
+  'ch1_140': {
+    ch:1, num:140, pool:'heavy',
+    text:'假設現有以下資訊：1.日落時間為本地時間18點46分。2.民用暮光時間為19點12分。3.航海暮光時間為19點43分。4.天文暮光時間為20點16分。請問無人機操作人應於何時終止飛航活動？',
+    opts:{A:'18點46分',B:'19點12分',C:'19點43分',D:'20點16分'},
+    ans:'A',
+    exp:'【太陽落下就停機！不是等天黑】規定是「日落後至日出前」不得飛航，所以要在「日落時間」（18:46）就停，不是等民用暮光（天還有點亮）才停。記憶：「日落 = 停機，標準看太陽不看天色」。',
+    related:[]
+  },
+  'ch1_146': {
+    ch:1, num:146, pool:'heavy',
+    text:'有關操作人從事遙控無人機飛航活動時應注意之距離限制，下列何者為正確？',
+    opts:{A:'應至少距高速公路範圍10公尺以上',B:'應至少距高架鐵路範圍20公尺以上',C:'應至少距建築物及障礙物範圍30公尺以上',D:'以上均正確'},
+    ans:'C',
+    exp:'【建築物及障礙物 = 30公尺】A說高速公路10公尺→錯！B說高架鐵路20公尺→錯！只有C正確。注意D說「以上均正確」但A和B都是錯的，所以不選D。記憶：「30公尺才對，10和20都是陷阱」。',
+    related:[]
+  }
+};
+
+// ─── STATE ──────────────────────────────────────────────────────────────────
+let state = {
+  pool: 'mixed',
+  count: 10,
+  chapter: 1,
+  queue: [],
+  current: 0,
+  correct: 0,
+  wrong: 0,
+  wrongIds: [],
+  answered: false,
+  ovFilter: 'all'
+};
+
+// ─── localStorage ────────────────────────────────────────────────────────────
+function getErrors() {
+  try { return JSON.parse(localStorage.getItem('drone_errors') || '{}'); } catch(e) { return {}; }
+}
+function saveErrors(e) {
+  localStorage.setItem('drone_errors', JSON.stringify(e));
+}
+function incError(id) {
+  const e = getErrors();
+  e[id] = (e[id] || 0) + 1;
+  saveErrors(e);
+}
+
+// ─── ROUTING ─────────────────────────────────────────────────────────────────
+function goTo(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0, 0);
+  if (id === 'screen-overview') renderOverview();
+  if (id === 'screen-errors') renderErrors();
+  if (id === 'screen-home') updateHomeStats();
+}
+
+// ─── COUNTDOWN ───────────────────────────────────────────────────────────────
+function updateCountdown() {
+  // Exam: 2026-04-21 afternoon, assume 14:00
+  const exam = new Date('2026-04-21T14:00:00+08:00');
+  const now = new Date();
+  const diff = exam - now;
+  const el = document.getElementById('countdown-val');
+  if (diff <= 0) { el.textContent = '考試時間到！'; return; }
+  const h = Math.floor(diff / 3600000);
+  const m = Math.floor((diff % 3600000) / 60000);
+  el.textContent = h + 'h ' + m + 'm';
+  el.parentElement.querySelector('.countdown-unit').textContent = '';
+}
+
+// ─── HOME ────────────────────────────────────────────────────────────────────
+function updateHomeStats() {
+  const all = Object.values(QUESTIONS);
+  document.getElementById('stat-light').textContent = all.filter(q=>q.pool==='light').length;
+  document.getElementById('stat-heavy').textContent = all.filter(q=>q.pool==='heavy').length;
+}
+
+// ─── SETUP ───────────────────────────────────────────────────────────────────
+function selectPool(p) {
+  state.pool = p;
+  ['light','heavy','mixed'].forEach(x => {
+    document.getElementById('pool-'+x).classList.toggle('selected', x===p);
+  });
+}
+function selectChap(c) { state.chapter = c; }
+function changeCount(d) {
+  const all = getPoolIds(state.pool);
+  state.count = Math.max(5, Math.min(all.length, state.count + d));
+  document.getElementById('count-display').textContent = state.count;
+}
+
+// ─── QUIZ ────────────────────────────────────────────────────────────────────
+function getPoolIds(pool) {
+  const all = Object.values(QUESTIONS);
+  if (pool === 'light') return all.filter(q=>q.pool==='light').map(q=>'ch'+q.ch+'_'+q.num);
+  if (pool === 'heavy') return all.filter(q=>q.pool==='heavy').map(q=>'ch'+q.ch+'_'+q.num);
+  // mixed: 70% heavy, 30% light
+  return all.map(q=>'ch'+q.ch+'_'+q.num);
+}
+
+function buildQueue(pool, count) {
+  const all = Object.values(QUESTIONS);
+  let heavy = all.filter(q=>q.pool==='heavy').map(q=>'ch'+q.ch+'_'+q.num);
+  let light = all.filter(q=>q.pool==='light').map(q=>'ch'+q.ch+'_'+q.num);
+  let ids = [];
+  if (pool === 'light') ids = [...light];
+  else if (pool === 'heavy') ids = [...heavy];
+  else {
+    // mixed: 70% heavy, 30% light
+    const hn = Math.round(count * 0.7);
+    const ln = count - hn;
+    const sh = shuffle([...heavy]).slice(0, hn);
+    const sl = shuffle([...light]).slice(0, ln);
+    ids = shuffle([...sh, ...sl]);
+  }
+  return shuffle(ids).slice(0, Math.min(count, ids.length));
+}
+
+function shuffle(arr) {
+  for (let i = arr.length-1; i > 0; i--) {
+    const j = Math.floor(Math.random()*(i+1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+
+function startQuiz() {
+  state.queue = buildQueue(state.pool, state.count);
+  state.current = 0;
+  state.correct = 0;
+  state.wrong = 0;
+  state.wrongIds = [];
+  goTo('screen-quiz');
+  renderQuestion();
+}
+
+function renderQuestion() {
+  const id = state.queue[state.current];
+  const q = QUESTIONS[id];
+  state.answered = false;
+
+  const poolLabel = {'light':'🔵 一點點不熟','heavy':'🔴 很不熟','mixed':'🟣 混合'}[state.pool];
+  document.getElementById('quiz-pool-tag').textContent = poolLabel + '　　第' + q.ch + '章';
+  document.getElementById('quiz-progress-label').textContent = '第 '+(state.current+1)+' / '+state.queue.length+' 題';
+  document.getElementById('quiz-score-label').textContent = '✅ '+state.correct+'　❌ '+state.wrong;
+  document.getElementById('progress-fill').style.width = (state.current/state.queue.length*100)+'%';
+  document.getElementById('q-num').textContent = '第 '+q.ch+' 章　第 '+q.num+' 題';
+  document.getElementById('q-text').textContent = q.text;
+
+  const ol = document.getElementById('options-list');
+  ol.innerHTML = '';
+  ['A','B','C','D'].forEach(letter => {
+    const div = document.createElement('div');
+    div.className = 'option-item';
+    div.id = 'opt-'+letter;
+    div.innerHTML = '<span class="option-letter">'+letter+'</span><span class="option-text">'+q.opts[letter]+'</span>';
+    div.onclick = () => selectAnswer(letter);
+    ol.appendChild(div);
+  });
+
+  document.getElementById('explanation-area').style.display = 'none';
+  const nb = document.getElementById('next-btn');
+  nb.textContent = state.current < state.queue.length-1 ? '下一題 →' : '查看結果 →';
+}
+
+function selectAnswer(chosen) {
+  if (state.answered) return;
+  state.answered = true;
+  const id = state.queue[state.current];
+  const q = QUESTIONS[id];
+  const correct = q.ans;
+  const isRight = chosen === correct;
+
+  ['A','B','C','D'].forEach(l => {
+    const el = document.getElementById('opt-'+l);
+    el.classList.add('disabled');
+    if (l === correct) el.classList.add('correct');
+    else if (l === chosen && !isRight) el.classList.add('selected-wrong');
+  });
+
+  if (isRight) {
+    state.correct++;
+    document.getElementById('exp-result').textContent = '✅ 答對了！';
+    document.getElementById('exp-result').className = 'explanation-result correct';
+    document.getElementById('exp-answer').textContent = '正確答案：' + correct + '　' + q.opts[correct];
+  } else {
+    state.wrong++;
+    state.wrongIds.push(id);
+    incError(id);
+    document.getElementById('exp-result').textContent = '❌ 答錯了';
+    document.getElementById('exp-result').className = 'explanation-result wrong';
+    document.getElementById('exp-answer').textContent = '正確答案：' + correct + '　' + q.opts[correct];
+  }
+
+  document.getElementById('exp-text').innerHTML = q.exp.replace(/\n/g, '<br>');
+  document.getElementById('explanation-area').style.display = 'block';
+  document.getElementById('quiz-score-label').textContent = '✅ '+state.correct+'　❌ '+state.wrong;
+}
+
+function nextQuestion() {
+  if (state.current < state.queue.length-1) {
+    state.current++;
+    renderQuestion();
+    window.scrollTo(0,0);
+  } else {
+    showResult();
+  }
+}
+function confirmEndEarly() {
+  if (confirm('確定要提前結束練習嗎？\n目前已答 '+(state.current+1)+' 題，成績將以已答題數計算。')) {
+    // trim queue to answered portion
+    state.queue = state.queue.slice(0, state.current + 1);
+    showResult();
+  }
+}
+
+// ─── RESULT ──────────────────────────────────────────────────────────────────
+function showResult() {
+  goTo('screen-result');
+  const total = state.queue.length;
+  const score = Math.round((state.correct / total) * 100);
+  document.getElementById('result-score').textContent = score;
+  const titles = [
+    [90,'太強了！考試必過 🎉'],
+    [75,'很不錯，再複習一下！'],
+    [60,'還要加油，重點再看看'],
+    [0,'多練幾次，一定可以的！']
+  ];
+  const t = titles.find(([min]) => score >= min);
+  document.getElementById('result-title').textContent = t ? t[1] : '加油！';
+  document.getElementById('result-sub').textContent = '（換算100分制成績）';
+  document.getElementById('r-correct').textContent = state.correct;
+  document.getElementById('r-wrong').textContent = state.wrong;
+
+  const area = document.getElementById('wrong-list-area');
+  if (state.wrongIds.length === 0) {
+    area.innerHTML = '<div style="text-align:center;padding:20px;color:var(--green)">🎉 全部答對！</div>';
+    return;
+  }
+  let html = '<div class="wrong-list-title">本次答錯的題目：</div>';
+  state.wrongIds.forEach(id => {
+    const q = QUESTIONS[id];
+    html += `<div class="wrong-item">
+      <div class="wrong-item-num">第${q.ch}章 第${q.num}題</div>
+      <div class="wrong-item-text">${q.text.substring(0,60)}…</div>
+      <div class="wrong-item-answer">✅ 正確答案：${q.ans}　${q.opts[q.ans]}</div>
+    </div>`;
+  });
+  area.innerHTML = html;
+}
+
+// ─── OVERVIEW ────────────────────────────────────────────────────────────────
+function setOvFilter(f) {
+  state.ovFilter = f;
+  ['all','light','heavy'].forEach(x => {
+    document.getElementById('ov-'+x).classList.toggle('active', x===f);
+  });
+  renderOverview();
+}
+
+function renderOverview() {
+  const all = Object.values(QUESTIONS);
+  const filtered = state.ovFilter === 'all' ? all :
+    all.filter(q => q.pool === state.ovFilter);
+  const el = document.getElementById('overview-list');
+  el.innerHTML = filtered.map(q => {
+    const badge = q.pool === 'light'
+      ? '<span class="overview-pool-badge badge-light">一點點不熟</span>'
+      : '<span class="overview-pool-badge badge-heavy">很不熟</span>';
+    return `<div class="overview-item">
+      <div class="overview-item-header">
+        <span class="overview-item-num">第${q.ch}章 第${q.num}題</span>
+        ${badge}
+      </div>
+      <div class="overview-item-q">${q.text}</div>
+      <div class="overview-answer">✅ ${q.ans}　${q.opts[q.ans]}</div>
+      <div class="overview-exp">${q.exp.replace(/\n/g,'<br>')}</div>
+    </div>`;
+  }).join('');
+}
+
+// ─── ERRORS ──────────────────────────────────────────────────────────────────
+function renderErrors() {
+  const errs = getErrors();
+  const el = document.getElementById('error-list');
+  const entries = Object.entries(errs).filter(([id]) => QUESTIONS[id]);
+  if (entries.length === 0) {
+    el.innerHTML = '<div class="no-errors"><div class="no-errors-icon">🎉</div><div>還沒有錯題紀錄！</div><div style="margin-top:8px;font-size:13px">開始練習後，答錯的題目會顯示在這裡</div></div>';
+    return;
+  }
+  entries.sort((a,b) => b[1]-a[1]);
+  el.innerHTML = entries.map(([id, cnt]) => {
+    const q = QUESTIONS[id];
+    return `<div class="error-item">
+      <div class="error-item-header">
+        <span style="font-size:13px;color:var(--sub)">第${q.ch}章 第${q.num}題</span>
+        <span class="error-count-badge">答錯 ${cnt} 次</span>
+      </div>
+      <div class="error-item-q">${q.text}</div>
+      <div class="error-item-answer">✅ 正確答案：${q.ans}　${q.opts[q.ans]}</div>
+      <div class="error-item-exp">${q.exp.replace(/\n/g,'<br>')}</div>
+    </div>`;
+  }).join('');
+}
+
+// ─── INIT ────────────────────────────────────────────────────────────────────
+selectPool('mixed');
+updateCountdown();
+setInterval(updateCountdown, 60000);
+updateHomeStats();
+</script>
+</body>
+</html>
